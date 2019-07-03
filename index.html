@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Exemplo de aplicação cliente em VueJS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>{{studentFormTitle}}</h1>
+        <b>Nome: </b>
+        <input type="text" v-model="studentName">
+        <b> Período: </b>
+        <input type="number" v-model="studentPeriod">
+        <button type="button" @click="saveStudent">Salvar</button>
+
+        <h1>Alunos cadastrados</h1>
+        <table border="solid 1px #000">
+            <tr>
+                <th>Nome</th>
+                <th>Período</th>
+                <th>Ações</th>
+            </tr>
+            <tr v-for="(student, index) of students">
+                <td>{{student.name}}</td>
+                <td>{{student.period}}</td>
+                <td>
+                    <button type="button" @click="editStudent(index)">Editar</button>
+                    <button type="button" @click="deleteStudent(index)">Excluir</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                studentFormTitle: 'Cadastrar Aluno',
+                studentIndex: null,
+                studentName: '',
+                studentPeriod: null,
+                students: []
+            },
+            methods: {
+                saveStudent() {
+                    var position = this.students.length;
+                    if (this.studentIndex != null) {
+                        position = this.studentIndex;
+                    }
+
+                    this.students[position] = {
+                        name: this.studentName,
+                        period: this.studentPeriod
+                    };
+
+                    this.studentName = '';
+                    this.studentPeriod = null;    
+                    this.studentIndex = null;           
+                },
+
+                deleteStudent(index) {
+                    this.students.splice(index, 1);
+                },
+
+                editStudent(index) {
+                    this.studentIndex = index;
+                    this.studentName = this.students[index].name;
+                    this.studentPeriod = this.students[index].period;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
