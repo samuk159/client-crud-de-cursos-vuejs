@@ -11,29 +11,59 @@
 </head>
 <body>
     <div id="app">
-        <h1>{{studentFormTitle}}</h1>
-        <b>Nome: </b>
-        <input type="text" v-model="studentName">
-        <b> Período: </b>
-        <input type="number" v-model="studentPeriod">
-        <button type="button" @click="saveStudent">Salvar</button>
-
-        <h1>Alunos cadastrados</h1>
-        <table border="solid 1px #000">
-            <tr>
-                <th>Nome</th>
-                <th>Período</th>
-                <th>Ações</th>
-            </tr>
-            <tr v-for="(student, index) of students">
-                <td>{{student.name}}</td>
-                <td>{{student.period}}</td>
-                <td>
-                    <button type="button" @click="editStudent(index)">Editar</button>
-                    <button type="button" @click="deleteStudent(index)">Excluir</button>
-                </td>
-            </tr>
-        </table>
+        <div style="width:50%;float:left">
+            <h1>{{studentFormTitle}}</h1>
+            <b>Nome: </b>
+            <input type="text" v-model="studentName">
+            <b> Período: </b>
+            <input type="number" v-model="studentPeriod"><br><br>
+            <b> Curso: </b>
+            <select v-model="studentCourse">
+                <option>Nenhum</option>
+                <option v-for="course in courses">{{course.name}}</option>
+            </select>
+            <button type="button" @click="saveStudent">Salvar</button>
+    
+            <h2>Alunos cadastrados</h2>
+            <table border="solid 1px #000">
+                <tr>
+                    <th>Nome</th>
+                    <th>Curso</th>
+                    <th>Período</th>
+                    <th>Ações</th>
+                </tr>
+                <tr v-for="(student, index) of students">
+                    <td>{{student.name}}</td>
+                    <td>{{student.course}}</td>
+                    <td>{{student.period}}</td>
+                    <td>
+                        <button type="button" @click="editStudent(index)">Editar</button>
+                        <button type="button" @click="deleteStudent(index)">Excluir</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="width:50%;float:right">
+            <h1>{{courseFormTitle}}</h1>
+            <b>Nome: </b>
+            <input type="text" v-model="courseName">
+            <button type="button" @click="saveCourse">Salvar</button>
+    
+            <h2>Cursos cadastrados</h2>
+            <table border="solid 1px #000">
+                <tr>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+                <tr v-for="(course, index) of courses">
+                    <td>{{course.name}}</td>
+                    <td>
+                        <button type="button" @click="editCourse(index)">Editar</button>
+                        <button type="button" @click="deleteCourse(index)">Excluir</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -44,7 +74,13 @@
                 studentIndex: null,
                 studentName: '',
                 studentPeriod: null,
-                students: []
+                studentCourse: null,
+                students: [],
+                courseFormTitle: 'Cadastrar Curso',
+                courseIndex: null,
+                courseName: '',
+                coursePeriod: null,
+                courses: []
             },
             methods: {
                 saveStudent() {
@@ -55,12 +91,14 @@
 
                     this.students[position] = {
                         name: this.studentName,
-                        period: this.studentPeriod
+                        period: this.studentPeriod,
+                        course: this.studentCourse
                     };
 
                     this.studentName = '';
                     this.studentPeriod = null;    
-                    this.studentIndex = null;           
+                    this.studentIndex = null;  
+                    this.studentFormTitle = 'Cadastrar Aluno';    
                 },
 
                 deleteStudent(index) {
@@ -71,6 +109,36 @@
                     this.studentIndex = index;
                     this.studentName = this.students[index].name;
                     this.studentPeriod = this.students[index].period;
+                    this.studentCourse = this.students[index].course;
+                    this.studentFormTitle = 'Atualizar Aluno';
+                },
+
+                saveCourse() {
+                    var position = this.courses.length;
+                    if (this.courseIndex != null) {
+                        position = this.courseIndex;
+                    }
+
+                    this.courses[position] = {
+                        name: this.courseName,
+                        period: this.coursePeriod
+                    };
+
+                    this.courseName = '';
+                    this.coursePeriod = null;    
+                    this.courseIndex = null;  
+                    this.courseFormTitle = 'Cadastrar Curso';    
+                },
+
+                deleteCourse(index) {
+                    this.courses.splice(index, 1);
+                },
+
+                editCourse(index) {
+                    this.courseIndex = index;
+                    this.courseName = this.courses[index].name;
+                    this.coursePeriod = this.courses[index].period;
+                    this.courseFormTitle = 'Atualizar Curso';
                 }
             }
         });
