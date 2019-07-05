@@ -25,119 +25,109 @@
 
         <div class="row p-3">
             <div class="col-12">
-                <div v-if="currentPage === 'students'" class="card">
-                    <div class="card-header">
-                        Alunos
-                    </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-header">
-                                {{studentFormTitle}}
-                            </div>
-                            <div class="card-body">
-                                <div class="row mx-0">
-                                    <div class="col-8">
-                                        <div class="form-group row align-items-center">
-                                            <label for="studentName" class="col-3 mb-0">Nome</label>
-                                            <input type="text" class="form-control col-9" id="studentName" 
-                                            placeholder="Nome do aluno" v-model="studentName">
-                                        </div>
-                                    </div>
-                                    <div class="col-4 justify-content-end">
-                                        <div class="form-group row align-items-center">
-                                            <label for="studentPeriod" class="col-auto mb-0">Período</label>
-                                            <input type="number" class="form-control col" id="studentPeriod"
-                                            v-model="studentPeriod">
-                                        </div>
+                <div v-if="currentPage === 'students'">
+                    <div class="card">
+                        <div class="card-header">
+                            {{studentFormTitle}}
+                        </div>
+                        <div class="card-body">
+                            <div class="row mx-0">
+                                <div class="col-8">
+                                    <div class="form-group row align-items-center">
+                                        <label for="studentName" class="col-3 mb-0">Nome</label>
+                                        <input type="text" class="form-control col-9" id="studentName" 
+                                        placeholder="Nome do aluno" v-model="studentName">
                                     </div>
                                 </div>
-                                <div class="row mx-0">
-                                    <div class="col-8">
-                                        <div class="form-group row align-items-center">
-                                            <label for="studentCourse" class="col-3">Curso</label>
-                                            <select class="form-control col-9" id="studentCourse"
-                                            v-model="studentCourse">
-                                                <option>Nenhum</option>
-                                                <option v-for="course in courses">{{course.name}}</option>
-                                            </select>
-                                        </div>
+                                <div class="col-4 justify-content-end">
+                                    <div class="form-group row align-items-center">
+                                        <label for="studentPeriod" class="col-auto mb-0">Período</label>
+                                        <input type="number" class="form-control col" id="studentPeriod"
+                                        v-model="studentPeriod">
                                     </div>
-                                    <div class="col-4">
-                                        <div class="row justify-content-end">
-                                            <div class="col-auto">
-                                                <button type="button" @click="saveStudent" 
-                                                    class="btn btn-success">
-                                                    Salvar
-                                                </button>
-                                            </div>
+                                </div>
+                            </div>
+                            <div class="row mx-0">
+                                <div class="col-8">
+                                    <div class="form-group row align-items-center">
+                                        <label for="studentCourse" class="col-3">Curso</label>
+                                        <select class="form-control col-9" id="studentCourse"
+                                        v-model="studentCourse">
+                                            <option>Nenhum</option>
+                                            <option v-for="course in courses">{{course.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="row justify-content-end">
+                                        <div class="col-auto">
+                                            <button type="button" @click="saveStudent" 
+                                                class="btn btn-success">
+                                                Salvar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                Alunos cadastrados
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Nome</th>
-                                            <th scope="col">Curso</th>
-                                            <th scope="col">Período</th>
-                                            <th scope="col">Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(student, index) of students">
-                                            <td>{{student.name}}</td>
-                                            <td>{{student.course}}</td>
-                                            <td>{{student.period}}</td>
-                                            <td>
-                                                <button type="button" @click="editStudent(index)"
-                                                class="btn btn-primary">
-                                                    Editar
-                                                </button>
-                                                <button type="button" @click="deleteStudent(index)"
-                                                class="btn btn-danger">
-                                                    Excluir
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Alunos cadastrados
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">Curso</th>
+                                        <th scope="col">Período</th>
+                                        <th scope="col">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(student, index) of students">
+                                        <td>{{student.name}}</td>
+                                        <td>{{student.course}}</td>
+                                        <td>{{student.period}}</td>
+                                        <td>
+                                            <button type="button" @click="editStudent(index)"
+                                            class="btn btn-primary">
+                                                Editar
+                                            </button>
+                                            <button type="button" @click="deleteStudent(index)"
+                                            class="btn btn-danger">
+                                                Excluir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-12">
-                <div v-if="currentPage === 'courses'" class="card">
-                    <div class="card-header">
-                        Cursos
-                    </div>
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-header">
-                                {{courseFormTitle}}
-                            </div>
-                            <div class="card-body">
-                                <div class="row mx-0">
-                                    <div class="col">
-                                        <div class="form-group row align-items-center">
-                                            <label for="courseName" class="col-2 mb-0">Nome</label>
-                                            <input type="text" class="form-control col-7" id="courseName" 
-                                            placeholder="Nome do curso" v-model="courseName">
-                                            <div class="col-3">
-                                                <div class="row justify-content-end">
-                                                    <div class="col-auto">
-                                                        <button type="button" @click="saveCourse" 
-                                                            class="btn btn-success">
-                                                            Salvar
-                                                        </button>
-                                                    </div>
+                <div v-if="currentPage === 'courses'">
+                    <div class="card">
+                        <div class="card-header">
+                            {{courseFormTitle}}
+                        </div>
+                        <div class="card-body">
+                            <div class="row mx-0">
+                                <div class="col">
+                                    <div class="form-group row align-items-center">
+                                        <label for="courseName" class="col-2 mb-0">Nome</label>
+                                        <input type="text" class="form-control col-7" id="courseName" 
+                                        placeholder="Nome do curso" v-model="courseName">
+                                        <div class="col-3">
+                                            <div class="row justify-content-end">
+                                                <div class="col-auto">
+                                                    <button type="button" @click="saveCourse" 
+                                                        class="btn btn-success">
+                                                        Salvar
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -145,36 +135,36 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                Cursos cadastrados
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Nome</th>
-                                            <th scope="col">Ações</th>  
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(course, index) of courses">
-                                            <td>{{course.name}}</td>
-                                            <td>
-                                                <button type="button" @click="editCourse(index)"
-                                                class="btn btn-primary">
-                                                    Editar
-                                                </button>
-                                                <button type="button" @click="deleteCourse(index)"
-                                                class="btn btn-danger">
-                                                    Excluir
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Cursos cadastrados
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nome</th>
+                                        <th scope="col">Ações</th>  
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(course, index) of courses">
+                                        <td>{{course.name}}</td>
+                                        <td>
+                                            <button type="button" @click="editCourse(index)"
+                                            class="btn btn-primary">
+                                                Editar
+                                            </button>
+                                            <button type="button" @click="deleteCourse(index)"
+                                            class="btn btn-danger">
+                                                Excluir
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
