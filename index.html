@@ -10,9 +10,22 @@
 </head>
 <body>
     <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">                
+            <div class="collapse navbar-collapse" id="conteudoNavbarSuportado">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" :class="{active: currentPage === 'students'}">
+                        <a class="nav-link" @click="goToStudentsPage">Alunos</a>
+                    </li>
+                    <li class="nav-item" :class="{active: currentPage === 'courses'}">
+                        <a class="nav-link" @click="goToCoursesPage">Cursos</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
         <div class="row p-3">
-            <div class="col-6">
-                <div class="card">
+            <div class="col-12">
+                <div v-if="currentPage === 'students'" class="card">
                     <div class="card-header">
                         Alunos
                     </div>
@@ -30,16 +43,16 @@
                                             placeholder="Nome do aluno" v-model="studentName">
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-4 justify-content-end">
                                         <div class="form-group row align-items-center">
-                                            <label for="studentPeriod" class="col-6 mb-0">Período</label>
-                                            <input type="number" class="form-control col-6" id="studentPeriod"
+                                            <label for="studentPeriod" class="col-auto mb-0">Período</label>
+                                            <input type="number" class="form-control col" id="studentPeriod"
                                             v-model="studentPeriod">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row mx-0">
-                                    <div class="col-9">
+                                    <div class="col-8">
                                         <div class="form-group row align-items-center">
                                             <label for="studentCourse" class="col-3">Curso</label>
                                             <select class="form-control col-9" id="studentCourse"
@@ -49,7 +62,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-4">
                                         <div class="row justify-content-end">
                                             <div class="col-auto">
                                                 <button type="button" @click="saveStudent" 
@@ -100,8 +113,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="card">
+            <div class="col-12">
+                <div v-if="currentPage === 'courses'" class="card">
                     <div class="card-header">
                         Cursos
                     </div>
@@ -186,7 +199,11 @@
                 courseIndex: null,
                 courseName: '',
                 coursePeriod: null,
-                courses: []
+                courses: [],
+                pages: [
+                    'students', 'courses'
+                ],
+                currentPage: 'students'
             },
             methods: {
                 saveStudent() {
@@ -246,6 +263,14 @@
                     this.courseName = this.courses[index].name;
                     this.coursePeriod = this.courses[index].period;
                     this.courseFormTitle = 'Atualizar Curso';
+                },
+
+                goToStudentsPage() {
+                    this.currentPage = this.pages[0];
+                },
+
+                goToCoursesPage() {
+                    this.currentPage = this.pages[1];
                 }
             }
         });
