@@ -54,7 +54,7 @@
                                         <select class="form-control col-9" id="studentCourse"
                                         v-model="studentCourse">
                                             <option>Nenhum</option>
-                                            <option v-for="course in courses">{{course.nome}}</option>
+                                            <option v-for="course in courses" :value="course">{{course.nome}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -224,28 +224,50 @@
                 },
 
                 saveStudent() {
-                    /*this.students[position] = {
-                        name: this.studentName,
-                        period: this.studentPeriod,
-                        course: this.studentCourse
-                    };*/
+                    var method = 'POST';
+                    var id = null;
+                    if (this.studentId) {
+                        method = 'PUT';
+                        id = this.studentId;
+                    }
 
-                    this.studentId = null;
-                    this.studentName = '';
-                    this.studentPeriod = null; 
-                    this.studentFormTitle = 'Cadastrar Aluno';    
-                    this.studentCourse = null;
+                    $.ajax({
+                        url: this.apiURL + '/alunos',
+                        type: method,
+                        contentType: 'application/json',
+                        data : JSON.stringify({
+                            id: id,
+                            nome: this.studentName,
+                            periodo: this.studentPeriod,
+                            curso: this.studentCourse
+                        }),
+                        success: function(result) {
+                            this.loadStudents();
+
+                            this.studentId = null;
+                            this.studentName = '';
+                            this.studentPeriod = null; 
+                            this.studentFormTitle = 'Cadastrar Aluno';    
+                            this.studentCourse = null;
+                        }.bind(this)
+                    });
                 },
 
                 deleteStudent(index) {
-                    this.students.splice(index, 1);
+                    $.ajax({
+                        url: this.apiURL + '/alunos/' + this.students[index].id,
+                        type: 'DELETE',
+                        success: function(result) {
+                            this.loadStudents();
+                        }.bind(this)
+                    });
                 },
 
                 editStudent(index) {
                     this.studentId = this.students[index].id;
-                    this.studentName = this.students[index].name;
-                    this.studentPeriod = this.students[index].period;
-                    this.studentCourse = this.students[index].course;
+                    this.studentName = this.students[index].nome;
+                    this.studentPeriod = this.students[index].periodo;
+                    this.studentCourse = this.students[index].curso;
                     this.studentFormTitle = 'Atualizar Aluno';
                 },
 
@@ -267,7 +289,7 @@
 
                     $.ajax({
                         url: this.apiURL + '/cursos',
-                        type: 'POST',
+                        type: method,
                         contentType: 'application/json',
                         data : JSON.stringify({
                             id: id,
@@ -276,13 +298,13 @@
                         }),
                         success: function(result) {
                             this.loadCourses();
-                        }.bind(this)
-                    });
 
-                    this.courseId = null;
-                    this.courseName = '';
-                    this.courseDuration = null; 
-                    this.courseFormTitle = 'Cadastrar Curso';    
+                            this.courseId = null;
+                            this.courseName = '';
+                            this.courseDuration = null; 
+                            this.courseFormTitle = 'Cadastrar Curso';  
+                        }.bind(this)
+                    });  
                 },
 
                 deleteCourse(index) {
