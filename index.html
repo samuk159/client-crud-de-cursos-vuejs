@@ -54,7 +54,7 @@
                                         <select class="form-control col-9" id="studentCourse"
                                         v-model="studentCourse">
                                             <option>Nenhum</option>
-                                            <option v-for="course in courses">{{course.name}}</option>
+                                            <option v-for="course in courses">{{course.nome}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -116,20 +116,27 @@
                         </div>
                         <div class="card-body">
                             <div class="row mx-0">
-                                <div class="col">
+                                <div class="col-7">
                                     <div class="form-group row align-items-center">
-                                        <label for="courseName" class="col-2 mb-0">Nome</label>
-                                        <input type="text" class="form-control col-7" id="courseName" 
+                                        <label for="courseName" class="col-3 mb-0">Nome</label>
+                                        <input type="text" class="form-control col-9" id="courseName" 
                                         placeholder="Nome do curso" v-model="courseName">
-                                        <div class="col-3">
-                                            <div class="row justify-content-end">
-                                                <div class="col-auto">
-                                                    <button type="button" @click="saveCourse" 
-                                                        class="btn btn-success">
-                                                        Salvar
-                                                    </button>
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group row align-items-center">
+                                        <label for="courseDuration" class="col-auto mb-0">Duração</label>
+                                        <input type="number" class="form-control col" id="courseDuration"
+                                        v-model="courseDuration" placeholder="Duração do curso em meses">
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-auto">
+                                            <button type="button" @click="saveCourse" 
+                                                class="btn btn-success">
+                                                Salvar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -185,14 +192,16 @@
                 apiURL: 'http://localhost:8080',
                 studentFormTitle: 'Cadastrar Aluno',
                 studentIndex: null,
+                studentId: null,
                 studentName: '',
                 studentPeriod: null,
                 studentCourse: null,
                 students: [],
                 courseFormTitle: 'Cadastrar Curso',
                 courseIndex: null,
+                courseId: null,
                 courseName: '',
-                coursePeriod: null,
+                courseDuration: null,
                 courses: [],
                 pages: [
                     'students', 'courses'
@@ -202,21 +211,20 @@
             mounted() {
                 $.get(this.apiURL + '/conexao/status', {}, function(data, status) {
                     console.log("Conexão: " + data);
-                }.bind(this));
+                }.bind(this));     
 
-                $.get(this.apiURL + '/alunos', {}, function(data, status) { 
-                    if (data && data.length) {
-                        this.students = data;
-                    }
-                }.bind(this));
-
-                $.get(this.apiURL + '/cursos', {}, function(data, status) { 
-                    if (data && data.length) {
-                        this.courses = data;
-                    }
-                }.bind(this));
+                this.loadStudents();
+                this.loadCourses();           
             },
             methods: {
+                loadStudents() {
+                    $.get(this.apiURL + '/alunos', {}, function(data, status) { 
+                        if (data && data.length) {
+                            this.students = data;
+                        }
+                    }.bind(this));
+                },
+
                 saveStudent() {
                     var position = this.students.length;
                     if (this.studentIndex != null) {
@@ -248,19 +256,49 @@
                     this.studentFormTitle = 'Atualizar Aluno';
                 },
 
+                loadCourses() {
+                    $.get(this.apiURL + '/cursos', {}, function(data, status) { 
+                        if (data && data.length) {
+                            this.courses = data;
+                        }
+                    }.bind(this));
+                },
+
                 saveCourse() {
-                    var position = this.courses.length;
+                    /*var position = this.courses.length;
                     if (this.courseIndex != null) {
                         position = this.courseIndex;
                     }
 
                     this.courses[position] = {
                         name: this.courseName,
-                        period: this.coursePeriod
-                    };
+                        duration: this.courseDuration
+                    };*/
 
+                    var method = 'POST';
+                    var id = null;
+                    if (this.courseId) {
+                        method = 'PUT';
+                        id = this.courseId;
+                    }
+
+                    $.ajax({
+                        url: this.apiURL + '/cursos',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data : JSON.stringify({
+                            id: id,
+                            nome: this.courseName,
+                            duracao: this.courseDuration
+                        }),
+                        success: function(result) {
+                            this.loadCourses();
+                        }.bind(this)
+                    });
+
+                    this.courseId = null;
                     this.courseName = '';
-                    this.coursePeriod = null;    
+                    this.courseDuration = null;    
                     this.courseIndex = null;  
                     this.courseFormTitle = 'Cadastrar Curso';    
                 },
@@ -271,8 +309,8 @@
 
                 editCourse(index) {
                     this.courseIndex = index;
-                    this.courseName = this.courses[index].name;
-                    this.coursePeriod = this.courses[index].period;
+                    this.courseName = this.courses[index].nome;
+                    this.courseDuration = this.courses[index].duracao;
                     this.courseFormTitle = 'Atualizar Curso';
                 },
 
