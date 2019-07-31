@@ -191,14 +191,12 @@
             data: {
                 apiURL: 'http://localhost:8080',
                 studentFormTitle: 'Cadastrar Aluno',
-                studentIndex: null,
                 studentId: null,
                 studentName: '',
                 studentPeriod: null,
                 studentCourse: null,
                 students: [],
                 courseFormTitle: 'Cadastrar Curso',
-                courseIndex: null,
                 courseId: null,
                 courseName: '',
                 courseDuration: null,
@@ -226,20 +224,15 @@
                 },
 
                 saveStudent() {
-                    var position = this.students.length;
-                    if (this.studentIndex != null) {
-                        position = this.studentIndex;
-                    }
-
-                    this.students[position] = {
+                    /*this.students[position] = {
                         name: this.studentName,
                         period: this.studentPeriod,
                         course: this.studentCourse
-                    };
+                    };*/
 
+                    this.studentId = null;
                     this.studentName = '';
-                    this.studentPeriod = null;    
-                    this.studentIndex = null;  
+                    this.studentPeriod = null; 
                     this.studentFormTitle = 'Cadastrar Aluno';    
                     this.studentCourse = null;
                 },
@@ -249,7 +242,7 @@
                 },
 
                 editStudent(index) {
-                    this.studentIndex = index;
+                    this.studentId = this.students[index].id;
                     this.studentName = this.students[index].name;
                     this.studentPeriod = this.students[index].period;
                     this.studentCourse = this.students[index].course;
@@ -265,16 +258,6 @@
                 },
 
                 saveCourse() {
-                    /*var position = this.courses.length;
-                    if (this.courseIndex != null) {
-                        position = this.courseIndex;
-                    }
-
-                    this.courses[position] = {
-                        name: this.courseName,
-                        duration: this.courseDuration
-                    };*/
-
                     var method = 'POST';
                     var id = null;
                     if (this.courseId) {
@@ -298,8 +281,7 @@
 
                     this.courseId = null;
                     this.courseName = '';
-                    this.courseDuration = null;    
-                    this.courseIndex = null;  
+                    this.courseDuration = null; 
                     this.courseFormTitle = 'Cadastrar Curso';    
                 },
 
@@ -308,7 +290,7 @@
                 },
 
                 editCourse(index) {
-                    this.courseIndex = index;
+                    this.courseId = this.courses[index].id;
                     this.courseName = this.courses[index].nome;
                     this.courseDuration = this.courses[index].duracao;
                     this.courseFormTitle = 'Atualizar Curso';
