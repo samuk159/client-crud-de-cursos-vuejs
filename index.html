@@ -54,7 +54,7 @@
                                         <select class="form-control col-9" id="studentCourse"
                                         v-model="studentCourse">
                                             <option>Nenhum</option>
-                                            <option v-for="course in courses">{{course.name}}</option>
+                                            <option v-for="course in courses" :value="course">{{course.nome}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -88,9 +88,9 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="(student, index) of students">
-                                        <td>{{student.name}}</td>
-                                        <td>{{student.course}}</td>
-                                        <td>{{student.period}}</td>
+                                        <td>{{student.nome}}</td>
+                                        <td>{{student.curso.nome}}</td>
+                                        <td>{{student.periodo}}</td>
                                         <td>
                                             <button type="button" @click="editStudent(index)"
                                             class="btn btn-primary">
@@ -116,20 +116,27 @@
                         </div>
                         <div class="card-body">
                             <div class="row mx-0">
-                                <div class="col">
+                                <div class="col-7">
                                     <div class="form-group row align-items-center">
-                                        <label for="courseName" class="col-2 mb-0">Nome</label>
-                                        <input type="text" class="form-control col-7" id="courseName" 
+                                        <label for="courseName" class="col-3 mb-0">Nome</label>
+                                        <input type="text" class="form-control col-9" id="courseName" 
                                         placeholder="Nome do curso" v-model="courseName">
-                                        <div class="col-3">
-                                            <div class="row justify-content-end">
-                                                <div class="col-auto">
-                                                    <button type="button" @click="saveCourse" 
-                                                        class="btn btn-success">
-                                                        Salvar
-                                                    </button>
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group row align-items-center">
+                                        <label for="courseDuration" class="col-auto mb-0">Duração</label>
+                                        <input type="number" class="form-control col" id="courseDuration"
+                                        v-model="courseDuration" placeholder="Duração do curso em meses">
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-auto">
+                                            <button type="button" @click="saveCourse" 
+                                                class="btn btn-success">
+                                                Salvar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -146,12 +153,14 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Nome</th>
+                                        <th scope="col">Duração</th>
                                         <th scope="col">Ações</th>  
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(course, index) of courses">
-                                        <td>{{course.name}}</td>
+                                        <td>{{course.nome}}</td>
+                                        <td>{{course.duracao}}</td>
                                         <td>
                                             <button type="button" @click="editCourse(index)"
                                             class="btn btn-primary">
@@ -175,83 +184,143 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         var app = new Vue({
             el: '#app',
             data: {
+                apiURL: 'http://localhost:8080',
                 studentFormTitle: 'Cadastrar Aluno',
-                studentIndex: null,
+                studentId: null,
                 studentName: '',
                 studentPeriod: null,
                 studentCourse: null,
                 students: [],
                 courseFormTitle: 'Cadastrar Curso',
-                courseIndex: null,
+                courseId: null,
                 courseName: '',
-                coursePeriod: null,
+                courseDuration: null,
                 courses: [],
                 pages: [
                     'students', 'courses'
                 ],
                 currentPage: 'students'
             },
+            mounted() {
+                $.get(this.apiURL + '/conexao/status', {}, function(data, status) {
+                    console.log("Conexão: " + data);
+                }.bind(this));     
+
+                this.loadStudents();
+                this.loadCourses();           
+            },
             methods: {
+                loadStudents() {
+                    $.get(this.apiURL + '/alunos', {}, function(data, status) { 
+                        if (data && data.length) {
+                            this.students = data;
+                        }
+                    }.bind(this));
+                },
+
                 saveStudent() {
-                    var position = this.students.length;
-                    if (this.studentIndex != null) {
-                        position = this.studentIndex;
+                    var method = 'POST';
+                    var id = null;
+                    if (this.studentId) {
+                        method = 'PUT';
+                        id = this.studentId;
                     }
 
-                    this.students[position] = {
-                        name: this.studentName,
-                        period: this.studentPeriod,
-                        course: this.studentCourse
-                    };
+                    $.ajax({
+                        url: this.apiURL + '/alunos',
+                        type: method,
+                        contentType: 'application/json',
+                        data : JSON.stringify({
+                            id: id,
+                            nome: this.studentName,
+                            periodo: this.studentPeriod,
+                            curso: this.studentCourse
+                        }),
+                        success: function(result) {
+                            this.loadStudents();
 
-                    this.studentName = '';
-                    this.studentPeriod = null;    
-                    this.studentIndex = null;  
-                    this.studentFormTitle = 'Cadastrar Aluno';    
-                    this.studentCourse = null;
+                            this.studentId = null;
+                            this.studentName = '';
+                            this.studentPeriod = null; 
+                            this.studentFormTitle = 'Cadastrar Aluno';    
+                            this.studentCourse = null;
+                        }.bind(this)
+                    });
                 },
 
                 deleteStudent(index) {
-                    this.students.splice(index, 1);
+                    $.ajax({
+                        url: this.apiURL + '/alunos/' + this.students[index].id,
+                        type: 'DELETE',
+                        success: function(result) {
+                            this.loadStudents();
+                        }.bind(this)
+                    });
                 },
 
                 editStudent(index) {
-                    this.studentIndex = index;
-                    this.studentName = this.students[index].name;
-                    this.studentPeriod = this.students[index].period;
-                    this.studentCourse = this.students[index].course;
+                    this.studentId = this.students[index].id;
+                    this.studentName = this.students[index].nome;
+                    this.studentPeriod = this.students[index].periodo;
+                    this.studentCourse = this.students[index].curso;
                     this.studentFormTitle = 'Atualizar Aluno';
                 },
 
+                loadCourses() {
+                    $.get(this.apiURL + '/cursos', {}, function(data, status) { 
+                        if (data && data.length) {
+                            this.courses = data;
+                        }
+                    }.bind(this));
+                },
+
                 saveCourse() {
-                    var position = this.courses.length;
-                    if (this.courseIndex != null) {
-                        position = this.courseIndex;
+                    var method = 'POST';
+                    var id = null;
+                    if (this.courseId) {
+                        method = 'PUT';
+                        id = this.courseId;
                     }
 
-                    this.courses[position] = {
-                        name: this.courseName,
-                        period: this.coursePeriod
-                    };
+                    $.ajax({
+                        url: this.apiURL + '/cursos',
+                        type: method,
+                        contentType: 'application/json',
+                        data : JSON.stringify({
+                            id: id,
+                            nome: this.courseName,
+                            duracao: this.courseDuration
+                        }),
+                        success: function(result) {
+                            this.loadCourses();
 
-                    this.courseName = '';
-                    this.coursePeriod = null;    
-                    this.courseIndex = null;  
-                    this.courseFormTitle = 'Cadastrar Curso';    
+                            this.courseId = null;
+                            this.courseName = '';
+                            this.courseDuration = null; 
+                            this.courseFormTitle = 'Cadastrar Curso';  
+                        }.bind(this)
+                    });  
                 },
 
                 deleteCourse(index) {
-                    this.courses.splice(index, 1);
+                    $.ajax({
+                        url: this.apiURL + '/cursos/' + this.courses[index].id,
+                        type: 'DELETE',
+                        success: function(result) {
+                            this.loadCourses();
+                        }.bind(this)
+                    });
                 },
 
                 editCourse(index) {
-                    this.courseIndex = index;
-                    this.courseName = this.courses[index].name;
-                    this.coursePeriod = this.courses[index].period;
+                    this.courseId = this.courses[index].id;
+                    this.courseName = this.courses[index].nome;
+                    this.courseDuration = this.courses[index].duracao;
                     this.courseFormTitle = 'Atualizar Curso';
                 },
 
