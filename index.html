@@ -286,7 +286,13 @@
                 },
 
                 deleteCourse(index) {
-                    this.courses.splice(index, 1);
+                    $.ajax({
+                        url: this.apiURL + '/cursos/' + this.courses[index].id,
+                        type: 'DELETE',
+                        success: function(result) {
+                            this.loadCourses();
+                        }.bind(this)
+                    });
                 },
 
                 editCourse(index) {
